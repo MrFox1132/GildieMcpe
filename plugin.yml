@@ -8,14 +8,14 @@ api:
 - 1.12.0
 - 2.0.0
 commands:
-  f:
-    description: use /g komendy for all parameters
+  g:
+    description: Uzyj /g komendy by uzyskac wszystkie komendy gildi
     permission: f.command
 permissions:
   f.command:
     default: true
-    description: Allow use of all faction commands
+    description: Pozwala na wykorzystanie wszystkich poleceń gildi
   fac.override:
     default: op
-    description: Allows op users to override factions
+    description: Umożliwia użytkownikom op zastąpić gildi
 ...

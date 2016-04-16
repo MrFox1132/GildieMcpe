@@ -35,7 +35,7 @@ class FactionListener implements Listener {
 		
 		if($this->plugin->motdWaiting($player)) {
 			if(time() - $this->plugin->getMOTDTime($player) > 30) {
-				$PCE->getPlayer()->sendMessage($this->plugin->formatMessage("Timed out. Please use /f motd again."));
+				$PCE->getPlayer()->sendMessage($this->plugin->formatMessage("•&cMotto Gildi Wygaslo ! /g motto •"));
 				$this->plugin->db->query("DELETE FROM motdrcv WHERE player='$player';");
 				$PCE->setCancelled(true);
 				return true;
@@ -44,7 +44,7 @@ class FactionListener implements Listener {
 				$faction = $this->plugin->getPlayerFaction($player);
 				$this->plugin->setMOTD($faction, $player, $motd);
 				$PCE->setCancelled(true);
-				$PCE->getPlayer()->sendMessage($this->plugin->formatMessage("Successfully updated faction message of the day!", true));
+				$PCE->getPlayer()->sendMessage($this->plugin->formatMessage("• Ustawiono Motto Gildi •!", true));
 			}
 			return true;
 		}
@@ -108,11 +108,10 @@ class FactionListener implements Listener {
                 return true;
             } else
                 $event->setCancelled(true);
-            $event->getPlayer()->sendPopup("§cThis area is already claimed. - Run /f help");
+            $event->getPlayer()->sendPopup("§cThis");
             return true;
         }
-    }
-
+    
 
     public function factionBlockPlaceProtect(BlockPlaceEvent $event)
     {

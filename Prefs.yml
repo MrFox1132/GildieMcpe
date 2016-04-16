@@ -2,7 +2,7 @@ MaxFactionNameLength: 20
 MaxPlayersPerFaction: 10
 ClaimingEnabled: true
 FactionNametags: true
-PlotSize: 25
+PlotSize: 30
 Member:
   claim: false
   demote: false

@@ -9,7 +9,7 @@ api:
 - 2.0.0
 commands:
   f:
-    description: use /f help for all parameters
+    description: use /g komendy for all parameters
     permission: f.command
 permissions:
   f.command:

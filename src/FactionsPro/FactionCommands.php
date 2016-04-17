@@ -38,29 +38,29 @@ class FactionCommands {
 					
 					/////////////////////////////// CREATE ///////////////////////////////
 					
-					if($args[0] == "create") {
+					if($args[0] == "stworz") {
 						if(!isset($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Usage: /f create <faction name>"));
+							$sender->sendMessage($this->plugin->formatMessage("Uzyj: /g stworz <nazwa gildi>"));
 							return true;
 						}
 						if(!(ctype_alnum($args[1]))) {
-							$sender->sendMessage($this->plugin->formatMessage("You may only use letters and numbers!"));
+							$sender->sendMessage($this->plugin->formatMessage("Mozna tylko uzywac liter oraz cyfr!"));
 							return true;
 						}
 						if($this->plugin->isNameBanned($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("This name is not allowed."));
+							$sender->sendMessage($this->plugin->formatMessage("Ta nazwa jest niedozwolona!"));
 							return true;
 						}
 						if($this->plugin->factionExists($args[1]) == true ) {
-							$sender->sendMessage($this->plugin->formatMessage("Faction already exists"));
+							$sender->sendMessage($this->plugin->formatMessage("Nazwa gildi juz taka instnieje!"));
 							return true;
 						}
 						if(strlen($args[1]) > $this->plugin->prefs->get("MaxFactionNameLength")) {
-							$sender->sendMessage($this->plugin->formatMessage("This name is too long. Please try again!"));
+							$sender->sendMessage($this->plugin->formatMessage("Nazwa jest zbyt dluga. Sprobuj ponownie!"));
 							return true;
 						}
 						if($this->plugin->isInFaction($sender->getName())) {
-							$sender->sendMessage($this->plugin->formatMessage("You must leave this faction first"));
+							$sender->sendMessage($this->plugin->formatMessage("Pierw musisz odejsc z gildi"));
 							return true;
 						} else {
 							$factionName = $args[1];
@@ -74,42 +74,42 @@ class FactionCommands {
 							if($this->plugin->prefs->get("FactionNametags")) {
 								$this->plugin->updateTag($player);
 							}
-							$sender->sendMessage($this->plugin->formatMessage("Faction successfully created!", true));
+							$sender->sendMessage($this->plugin->formatMessage("Gildia zostala zalozona!", true));
 							return true;
 						}
 					}
 					
 					/////////////////////////////// INVITE ///////////////////////////////
 					
-					if($args[0] == "invite") {
+					if($args[0] == "dodaj") {
 						if(!isset($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Usage: /f invite <player>"));
+							$sender->sendMessage($this->plugin->formatMessage("Uzyj: /fg dodaj <gracz>"));
 							return true;
 						}
 						if(!$this->plugin->isInFaction($player)) {
-							$sender->sendMessage($this->plugin->formatMessage("You must be in a faction to use this"));
+							$sender->sendMessage($this->plugin->formatMessage("Musisz byc w gildi by uzyc komendy"));
 							return true;
 						}
-						if(!$this->plugin->isLeader($player) && !$this->plugin->hasPermission($player, "invite")) {
-							$sender->sendMessage($this->plugin->formatMessage("You do not have permission to do this"));
+						if(!$this->plugin->isLeader($player) && !$this->plugin->hasPermission($player, "dodaj")) {
+							$sender->sendMessage($this->plugin->formatMessage("Nie mass odpowiednich uprawnien by skorzystac z tej komendy!"));
 							return true;
 						}
 						if( $this->plugin->isFactionFull($this->plugin->getPlayerFaction($player)) ) {
-							$sender->sendMessage($this->plugin->formatMessage("Faction is full. Please kick players to make room."));
+							$sender->sendMessage($this->plugin->formatMessage("Gildia jest pelna! Wywal kogos z gildi."));
 							return true;
 						}
 						$invited = $this->plugin->getServer()->getPlayerExact($args[1]);
 						if($this->plugin->isInFaction($invited) == true) {
-							$sender->sendMessage($this->plugin->formatMessage("Player is currently in a faction"));
+							$sender->sendMessage($this->plugin->formatMessage("Gracz jest obecnie w gildi"));
 							return true;
 						}
 						if(!$invited instanceof Player) {
-							$sender->sendMessage($this->plugin->formatMessage("Player not online!"));
+							$sender->sendMessage($this->plugin->formatMessage("Gracz nie jest aktywny!"));
 							return true;
 						}
 						$factionName = $this->plugin->getPlayerFaction($player);
 						$invitedName = $invited->getName();
-						$rank = "Member";
+						$rank = "Członek";
 							
 						$stmt = $this->plugin->db->prepare("INSERT OR REPLACE INTO confirm (player, faction, invitedby, timestamp) VALUES (:player, :faction, :invitedby, :timestamp);");
 						$stmt->bindValue(":player", strtolower($invitedName));
@@ -118,31 +118,31 @@ class FactionCommands {
 						$stmt->bindValue(":timestamp", time());
 						$result = $stmt->execute();
 
-						$sender->sendMessage($this->plugin->formatMessage("$invitedName has been invited!", true));
-						$invited->sendMessage($this->plugin->formatMessage("You have been invited to $factionName. Type '/f accept' or '/f deny' into chat to accept or deny!", true));
+						$sender->sendMessage($this->plugin->formatMessage("$invitedName zostal zaproszony!", true));
+						$invited->sendMessage($this->plugin->formatMessage("Zostales dodany do gildi $factionName. Wpisz '/g akceptuj' lub '/f odrzuc' do czatu, aby zaakceptować lub odrzucić!", true));
 					}
 					
 					/////////////////////////////// LEADER ///////////////////////////////
 					
-					if($args[0] == "leader") {
+					if($args[0] == "lider") {
 						if(!isset($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Usage: /f leader <player>"));
+							$sender->sendMessage($this->plugin->formatMessage("Uzyj: /g lider <gracz>"));
 							return true;
 						}
 						if(!$this->plugin->isInFaction($sender->getName())) {
-							$sender->sendMessage($this->plugin->formatMessage("You must be in a faction to use this!"));
+							$sender->sendMessage($this->plugin->formatMessage("Musisz być w gildi aby skorzystać z tej komendy!"));
 							return true;
 						}
 						if(!$this->plugin->isLeader($player)) {
-							$sender->sendMessage($this->plugin->formatMessage("You must be leader to use this"));
+							$sender->sendMessage($this->plugin->formatMessage("Musisz być liderem aby skorzystać z tej komendy"));
 							return true;
 						}
 						if($this->plugin->getPlayerFaction($player) != $this->plugin->getPlayerFaction($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Add player to faction first!"));
+							$sender->sendMessage($this->plugin->formatMessage("Pierw dodaj gracza do gildi!"));
 							return true;
 						}		
 						if(!$this->plugin->getServer()->getPlayerExact($args[1]) instanceof Player) {
-							$sender->sendMessage($this->plugin->formatMessage("Player not online!"));
+							$sender->sendMessage($this->plugin->formatMessage("Gracz nie jest aktywny!"));
 							return true;
 						}
 							$factionName = $this->plugin->getPlayerFaction($player);
@@ -161,8 +161,8 @@ class FactionCommands {
 							$result = $stmt->execute();
 	
 	
-							$sender->sendMessage($this->plugin->formatMessage("You are no longer leader!", true));
-							$this->plugin->getServer()->getPlayer($args[1])->sendMessage($this->plugin->formatMessage("You are now leader \nof $factionName!",  true));
+							$sender->sendMessage($this->plugin->formatMessage("Jesteś już liderem!", true));
+							$this->plugin->getServer()->getPlayer($args[1])->sendMessage($this->plugin->formatMessage("Jestes juz liderem/ka $factionName!",  true));
 							if($this->plugin->prefs->get("FactionNametags")) {
 								$this->plugin->updateTag($sender->getName());
 								$this->plugin->updateTag($this->plugin->getServer()->getPlayer($args[1])->getName());
@@ -171,25 +171,25 @@ class FactionCommands {
 					
 					/////////////////////////////// PROMOTE ///////////////////////////////
 					
-					if($args[0] == "promote") {
+					if($args[0] == "awans") {
 						if(!isset($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Usage: /f promote <player>"));
+							$sender->sendMessage($this->plugin->formatMessage("Uzyj: /g awans <gracz>"));
 							return true;
 						}
 						if(!$this->plugin->isInFaction($sender->getName())) {
-							$sender->sendMessage($this->plugin->formatMessage("You must be in a faction to use this!"));
+							$sender->sendMessage($this->plugin->formatMessage("Musisz byc w goldi by uzyc tej komendy!"));
 							return true;
 						}
 						if(!$this->plugin->isLeader($player) && !$this->plugin->hasPermission($player, "promote")) {
-							$sender->sendMessage($this->plugin->formatMessage("You do not have permission to do this"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie masz odpowiednich uprawnien by skorzystac z tej komendy"));
 							return true;
 						}
 						if($this->plugin->getPlayerFaction($player) != $this->plugin->getPlayerFaction($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Player is not in this faction!"));
+							$sender->sendMessage($this->plugin->formatMessage("Gracz nie jest w tej gildi!"));
 							return true;
 						}
 						if($this->plugin->isOfficer($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Player is already Officer"));
+							$sender->sendMessage($this->plugin->formatMessage("Gracz jux kest oficerem"));
 							return true;
 						}
 						$factionName = $this->plugin->getPlayerFaction($player);
@@ -199,9 +199,9 @@ class FactionCommands {
 						$stmt->bindValue(":rank", "Officer");
 						$result = $stmt->execute();
 						$player = $args[1];
-						$sender->sendMessage($this->plugin->formatMessage("" . $player . " has been promoted to Officer!", true));
+						$sender->sendMessage($this->plugin->formatMessage("" . $player . " zostal awansowany jako oficer!", true));
 						if($player = $this->plugin->getServer()->getPlayer($args[1])) {
-							$player->sendMessage($this->plugin->formatMessage("You are now Officer!", true));
+							$player->sendMessage($this->plugin->formatMessage("Jestes juz oficerem!", true));
 						}
 						if($this->plugin->prefs->get("FactionNametags")) {
 								$this->plugin->updateTag($player->getName());
@@ -210,25 +210,25 @@ class FactionCommands {
 					
 					/////////////////////////////// DEMOTE ///////////////////////////////
 					
-					if($args[0] == "demote") {
+					if($args[0] == "zdegraduj") {
 						if(!isset($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Usage: /f demote <player>"));
+							$sender->sendMessage($this->plugin->formatMessage("Uzyj: /g zdegraduj <gracz>"));
 							return true;
 						}
 						if($this->plugin->isInFaction($sender->getName()) == false) {
-							$sender->sendMessage($this->plugin->formatMessage("You must be in a faction to use this!"));
+							$sender->sendMessage($this->plugin->formatMessage("Muisz by pierw w gildi by skorzystac z tej komendy!"));
 							return true;
 						}
 						if(!$this->plugin->isLeader($player) && !$this->plugin->hasPermission($player, "demote")) {
-							$sender->sendMessage($this->plugin->formatMessage("You do not have permission to do this"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie masz odpowiednich uprawnien by skorzystac z tej komendy!"));
 							return true;
 						}
 						if($this->plugin->getPlayerFaction($player) != $this->plugin->getPlayerFaction($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Player is not in this faction!"));
+							$sender->sendMessage($this->plugin->formatMessage("Gracz nie jest w tej gildi!"));
 							return true;
 						}
 						if(!$this->plugin->isOfficer($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Player is already Member"));
+							$sender->sendMessage($this->plugin->formatMessage("Gracz jest juz czlonkiem"));
 							return true;
 						}
 						$factionName = $this->plugin->getPlayerFaction($player);
@@ -238,10 +238,10 @@ class FactionCommands {
 						$stmt->bindValue(":rank", "Member");
 						$result = $stmt->execute();
 						$player = $args[1];
-						$sender->sendMessage($this->plugin->formatMessage("" . $player . " has been demoted to Member.", true));
+						$sender->sendMessage($this->plugin->formatMessage("" . $player . " zostal juz czlonkiem.", true));
 						
 						if($player = $this->plugin->getServer()->getPlayer($args[1])) {
-							$player->sendMessage($this->plugin->formatMessage("You were demoted to Member.", true));
+							$player->sendMessage($this->plugin->formatMessage("Zostałeś zdegradowany do czlonka gildi.", true));
 						}
 						if($this->plugin->prefs->get("FactionNametags")) {
 							$this->plugin->updateTag($player->getName());
@@ -250,30 +250,30 @@ class FactionCommands {
 					
 					/////////////////////////////// KICK ///////////////////////////////
 					
-					if($args[0] == "kick") {
+					if($args[0] == "wyrzuc") {
 						if(!isset($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Usage: /f kick <player>"));
+							$sender->sendMessage($this->plugin->formatMessage("Uzyj: /g wyrzuc <gracz>"));
 							return true;
 						}
 						if($this->plugin->isInFaction($sender->getName()) == false) {
-							$sender->sendMessage($this->plugin->formatMessage("You must be in a faction to use this!"));
+							$sender->sendMessage($this->plugin->formatMessage("Musisz byc pierw w gildi by skorzystac z tej komendy!"));
 							return true;
 						}
 						if(!$this->plugin->isLeader($player) && !$this->plugin->hasPermission($player, "kick")) {
-							$sender->sendMessage($this->plugin->formatMessage("You do not have permission to do this"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie masz odpowiednich uprawnien by skorzystac z tej komendy"));
 							return true;
 						}
 						if($this->plugin->getPlayerFaction($player) != $this->plugin->getPlayerFaction($args[1])) {
-							$sender->sendMessage($this->plugin->formatMessage("Player is not in this faction!"));
+							$sender->sendMessage($this->plugin->formatMessage("Gracz nie jest w tej gildi"));
 							return true;
 						}
 						$kicked = $this->plugin->getServer()->getPlayer($args[1]);
 						$factionName = $this->plugin->getPlayerFaction($player);
 						$this->plugin->db->query("DELETE FROM master WHERE player='$args[1]';");
-						$sender->sendMessage($this->plugin->formatMessage("You successfully kicked $args[1]!", true));
+						$sender->sendMessage($this->plugin->formatMessage("Zostal wywalony z $args[1]!", true));
 						$players[] = $this->plugin->getServer()->getOnlinePlayers();
 						if(in_array($args[1], $players) == true) {
-							$this->plugin->getServer()->getPlayer($args[1])->sendMessage($this->plugin->formatMessage("You have been kicked from \n $factionName!", true));
+							$this->plugin->getServer()->getPlayer($args[1])->sendMessage($this->plugin->formatMessage("Zostales wywalony/a z gildi $factionName!", true));
 							if($this->plugin->prefs->get("FactionNametags")) {
 								$this->plugin->updateTag($args[1]);
 							}
@@ -286,7 +286,7 @@ class FactionCommands {
 					if(strtolower($args[0]) == 'info') {
 						if(isset($args[1])) {
 							if( !(ctype_alnum($args[1])) | !($this->plugin->factionExists($args[1]))) {
-								$sender->sendMessage($this->plugin->formatMessage("Faction does not exist"));
+								$sender->sendMessage($this->plugin->formatMessage("Gildia nie istnieje"));
 								return true;
 							}
 							$faction = strtolower($args[1]);
@@ -297,9 +297,9 @@ class FactionCommands {
 							$numPlayers = $this->plugin->getNumberOfPlayers($faction);
 							$sender->sendMessage(TextFormat::BOLD . "-------------------------");
 							$sender->sendMessage("$faction");
-							$sender->sendMessage(TextFormat::BOLD . "Leader: " . TextFormat::RESET . "$leader");
-							$sender->sendMessage(TextFormat::BOLD . "# of Players: " . TextFormat::RESET . "$numPlayers");
-							$sender->sendMessage(TextFormat::BOLD . "MOTD: " . TextFormat::RESET . "$message");
+							$sender->sendMessage(TextFormat::BOLD . "Lider: " . TextFormat::RESET . "$leader");
+							$sender->sendMessage(TextFormat::BOLD . "# Graczy: " . TextFormat::RESET . "$numPlayers");
+							$sender->sendMessage(TextFormat::BOLD . "Motto: " . TextFormat::RESET . "$message");
 							$sender->sendMessage(TextFormat::BOLD . "-------------------------");
 						} else {
 							$faction = $this->plugin->getPlayerFaction(strtolower($sender->getName()));
@@ -310,13 +310,13 @@ class FactionCommands {
 							$numPlayers = $this->plugin->getNumberOfPlayers($faction);
 							$sender->sendMessage(TextFormat::BOLD . "-------------------------");
 							$sender->sendMessage("$faction");
-							$sender->sendMessage(TextFormat::BOLD . "Leader: " . TextFormat::RESET . "$leader");
-							$sender->sendMessage(TextFormat::BOLD . "# of Players: " . TextFormat::RESET . "$numPlayers");
-							$sender->sendMessage(TextFormat::BOLD . "MOTD: " . TextFormat::RESET . "$message");
+							$sender->sendMessage(TextFormat::BOLD . "Lider: " . TextFormat::RESET . "$leader");
+							$sender->sendMessage(TextFormat::BOLD . "# Graczy: " . TextFormat::RESET . "$numPlayers");
+							$sender->sendMessage(TextFormat::BOLD . "Motto: " . TextFormat::RESET . "$message");
 							$sender->sendMessage(TextFormat::BOLD . "-------------------------");
 						}
 					}
-					if(strtolower($args[0]) == "help") {
+					if(strtolower($args[0]) == "pomoc") {
 						if(!isset($args[1]) || $args[1] == 1) {
 							$sender->sendMessage(TextFormat::BLUE . "FactionsPro Help Page 1 of 3" . TextFormat::RED . "\n/f about\n/f accept\n/f claim\n/f create <name>\n/f del\n/f demote <player>\n/f deny");
 							return true;

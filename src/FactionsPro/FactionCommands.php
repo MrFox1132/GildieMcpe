@@ -334,21 +334,21 @@ class FactionCommands {
 					
 					/////////////////////////////// CLAIM ///////////////////////////////
 					
-					if(strtolower($args[0]) == 'claim') {
+					if(strtolower($args[0]) == 'obszar') {
 						if($this->plugin->prefs->get("ClaimingEnabled") == false) {
 							$sender->sendMessage($this->plugin->formatMessage("Plots are not enabled on this server."));
 							return true;
 						}
 						if(!$this->plugin->isInFaction($player)) {
-							$sender->sendMessage($this->plugin->formatMessage("You must be in a faction."));
+							$sender->sendMessage($this->plugin->formatMessage("Musisz byc w gildi."));
 							return true;
 						}
 						if(!$this->plugin->isLeader($player) && !$this->plugin->hasPermission($player, "claim")) {
-							$sender->sendMessage($this->plugin->formatMessage("You do not have permission to do this"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie masz odpiwiednich uprawnien by wpisac ta komende!"));
 							return true;
 						}
 						if($this->plugin->inOwnPlot($sender)) {
-							$sender->sendMessage($this->plugin->formatMessage("Your faction has already claimed this area."));
+							$sender->sendMessage($this->plugin->formatMessage("Twoja gildia jest gotowa na ten obszar."));
 							return true;
 						}
 						$x = floor($sender->getX());
@@ -363,13 +363,13 @@ class FactionCommands {
 					
 					/////////////////////////////// UNCLAIM ///////////////////////////////
 					
-					if(strtolower($args[0]) == "unclaim") {
+					if(strtolower($args[0]) == "innyobszar") {
 						if($this->plugin->prefs->get("ClaimingEnabled") == false) {
 							$sender->sendMessage($this->plugin->formatMessage("Plots are not enabled on this server."));
 							return true;
 						}
 						if(!$this->plugin->isLeader($player) && !$this->plugin->hasPermission($player, "unclaim")) {
-							$sender->sendMessage($this->plugin->formatMessage("You do not have permission to do this"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie masz odpowiednich uprawnien by uzyc tej komendy"));
 							return true;
 						}
 						$faction = $this->plugin->getPlayerFaction($sender->getName());
@@ -379,13 +379,13 @@ class FactionCommands {
 					
 					/////////////////////////////// MOTD ///////////////////////////////
 					
-					if(strtolower($args[0]) == "motd") {
+					if(strtolower($args[0]) == "motto") {
 						if($this->plugin->isInFaction($sender->getName()) == false) {
-							$sender->sendMessage($this->plugin->formatMessage("You must be in a faction to use this!"));
+							$sender->sendMessage($this->plugin->formatMessage("Musisz byc w gildi by uzyc tej komendy!"));
 							return true;
 						}
 						if(!$this->plugin->isLeader($player) && !$this->plugin->hasPermission($player, "motd")) {
-							$sender->sendMessage($this->plugin->formatMessage("You do not have permission to do this"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie masz odpowiednich uprawnien by skorzystac z tej komendy!"));
 							return true;
 						}
 						$sender->sendMessage($this->plugin->formatMessage("Type your message in chat. It will not be visible to other players", true));
@@ -397,13 +397,13 @@ class FactionCommands {
 					
 					/////////////////////////////// ACCEPT ///////////////////////////////
 					
-					if(strtolower($args[0]) == "accept") {
+					if(strtolower($args[0]) == "akceptuje") {
 						$player = $sender->getName();
 						$lowercaseName = strtolower($player);
 						$result = $this->plugin->db->query("SELECT * FROM confirm WHERE player='$lowercaseName';");
 						$array = $result->fetchArray(SQLITE3_ASSOC);
 						if(empty($array) == true) {
-							$sender->sendMessage($this->plugin->formatMessage("You have not been invited to any factions!"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie zostales zaproszony do gildi"));
 							return true;
 						}
 						$invitedTime = $array["timestamp"];
@@ -416,30 +416,30 @@ class FactionCommands {
 							$stmt->bindValue(":rank", "Member");
 							$result = $stmt->execute();
 							$this->plugin->db->query("DELETE FROM confirm WHERE player='$lowercaseName';");
-							$sender->sendMessage($this->plugin->formatMessage("You successfully joined $faction!", true));
+							$sender->sendMessage($this->plugin->formatMessage("Wlasnie dolaczyles do gildi $faction!", true));
 							if($this->plugin->getServer()->getPlayer($array["invitedby"])) {
 								if($this->plugin->getServer()->getPlayer($array["invitedby"])) {
-									$this->plugin->getServer()->getPlayer($array["invitedby"])->sendMessage($this->plugin->formatMessage("$player joined the faction!", true));
+									$this->plugin->getServer()->getPlayer($array["invitedby"])->sendMessage($this->plugin->formatMessage("$player dolaczyl do gildi!", true));
 								}
 							}
 							if($this->plugin->prefs->get("FactionNametags")) {
 								$this->plugin->updateTag($sender->getName());
 							}
 						} else {
-							$sender->sendMessage($this->plugin->formatMessage("Invite has timed out!"));
+							$sender->sendMessage($this->plugin->formatMessage("Dodanie do gildi wygaslo!"));
 							$this->plugin->db->query("DELETE FROM confirm WHERE player='$lowercaseName';");
 						}
 					}
 					
 					/////////////////////////////// DENY ///////////////////////////////
 					
-					if(strtolower($args[0]) == "deny") {
+					if(strtolower($args[0]) == "odrzuc") {
 						$player = $sender->getName();
 						$lowercaseName = strtolower($player);
 						$result = $this->plugin->db->query("SELECT * FROM confirm WHERE player='$lowercaseName';");
 						$array = $result->fetchArray(SQLITE3_ASSOC);
 						if(empty($array) == true) {
-							$sender->sendMessage($this->plugin->formatMessage("You have not been invited to any factions!"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie zostales zaproszony do gildi!"));
 							return true;
 						}
 						$invitedTime = $array["timestamp"];
@@ -447,58 +447,58 @@ class FactionCommands {
 						if( ($currentTime - $invitedTime) <= 60 ) { //This should be configurable
 							$this->plugin->db->query("DELETE FROM confirm WHERE player='$lowercaseName';");
 							$sender->sendMessage($this->plugin->formatMessage("Invite declined!", true));
-							$this->plugin->getServer()->getPlayerExact($array["invitedby"])->sendMessage($this->plugin->formatMessage("$player declined the invite!"));
+							$this->plugin->getServer()->getPlayerExact($array["invitedby"])->sendMessage($this->plugin->formatMessage("$player odrzucil zaproszenie!"));
 						} else {
-							$sender->sendMessage($this->plugin->formatMessage("Invite has timed out!"));
+							$sender->sendMessage($this->plugin->formatMessage("Dodanie do gildi wygaslo!"));
 							$this->plugin->db->query("DELETE FROM confirm WHERE player='$lowercaseName';");
 						}
 					}
 					
 					/////////////////////////////// DELETE ///////////////////////////////
 					
-					if(strtolower($args[0]) == "del") {
+					if(strtolower($args[0]) == "usun") {
 						if($this->plugin->isInFaction($player) == true) {
 							if($this->plugin->isLeader($player)) {
 								$faction = $this->plugin->getPlayerFaction($player);
 								$this->plugin->db->query("DELETE FROM master WHERE faction='$faction';");
-								$sender->sendMessage($this->plugin->formatMessage("Faction successfully disbanded!", true));
+								$sender->sendMessage($this->plugin->formatMessage("Gildia zostala rozwiazana!", true));
 								if($this->plugin->prefs->get("FactionNametags")) {
 									$this->plugin->updateTag($sender->getName());
 								}
 							} else {
-								$sender->sendMessage($this->plugin->formatMessage("You are not leader!"));
+								$sender->sendMessage($this->plugin->formatMessage("Nie jestes liderem!"));
 							}
 						} else {
-							$sender->sendMessage($this->plugin->formatMessage("You are not in a faction!"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie jestes w gildi!"));
 						}
 					}
 					
 					/////////////////////////////// LEAVE ///////////////////////////////
 					
-					if(strtolower($args[0] == "leave")) {
+					if(strtolower($args[0] == "odejsc")) {
 						if($this->plugin->isLeader($player) == false) {
 							$remove = $sender->getPlayer()->getNameTag();
 							$faction = $this->plugin->getPlayerFaction($player);
 							$name = $sender->getName();
 							$this->plugin->db->query("DELETE FROM master WHERE player='$name';");
-							$sender->sendMessage($this->plugin->formatMessage("You successfully left $faction", true));
+							$sender->sendMessage($this->plugin->formatMessage("Wlasnie odeszles z gildi $faction", true));
 							if($this->plugin->prefs->get("FactionNametags")) {
 								$this->plugin->updateTag($sender->getName());
 							}
 						} else {
-							$sender->sendMessage($this->plugin->formatMessage("You must delete or give\nleadership first!"));
+							$sender->sendMessage($this->plugin->formatMessage("Musisz rozwaiazac gildie lub dac innemu lidera!"));
 						}
 					}
 					
 					/////////////////////////////// SETHOME ///////////////////////////////
 					
-					if(strtolower($args[0] == "sethome")) {
+					if(strtolower($args[0] == "ustawdom")) {
 						if(!$this->plugin->isInFaction($player)) {
-							$sender->sendMessage($this->plugin->formatMessage("You must be in a faction to do this."));
+							$sender->sendMessage($this->plugin->formatMessage("Musisz miec pierw gildie."));
 							return true;
 						}
 						if(!$this->plugin->isLeader($player) && !$this->plugin->hasPermission($player, "sethome")) {
-							$sender->sendMessage($this->plugin->formatMessage("You do not have permission to do this"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie masz odpowiednich uprawnien by skorzystac z tej komendy"));
 							return true;
 						}
 						$factionName = $this->plugin->getPlayerFaction($sender->getName());
@@ -509,33 +509,33 @@ class FactionCommands {
 						$stmt->bindValue(":z", $sender->getZ());
 						$stmt->bindValue(":world", $sender->getLevel()->getName());
 						$result = $stmt->execute();
-						$sender->sendMessage($this->plugin->formatMessage("Home updated!", true));
+						$sender->sendMessage($this->plugin->formatMessage("Dom dodany!", true));
 					}
 					
 					/////////////////////////////// UNSETHOME ///////////////////////////////
 						
-					if(strtolower($args[0] == "unsethome")) {
+					if(strtolower($args[0] == "usundom")) {
 						if(!$this->plugin->isInFaction($player)) {
-							$sender->sendMessage($this->plugin->formatMessage("You must be in a faction to do this."));
+							$sender->sendMessage($this->plugin->formatMessage("Musisz miec pierw gildie."));
 							return true;
 						}
 						if(!$this->plugin->isLeader($player) && !$this->plugin->hasPermission($player, "unsethome")) {
-							$sender->sendMessage($this->plugin->formatMessage("You do not have permission to do this"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie masz odpowiednich uprawnien by skorzystac z tej komendy"));
 							return true;
 						}
 						$faction = $this->plugin->getPlayerFaction($sender->getName());
 						$this->plugin->db->query("DELETE FROM home WHERE faction = '$faction';");
-						$sender->sendMessage($this->plugin->formatMessage("Home unset!", true));
+						$sender->sendMessage($this->plugin->formatMessage("Dom usunieto!", true));
 					}
 					
 					/////////////////////////////// HOME ///////////////////////////////
 						
-					if(strtolower($args[0] == "home")) {
+					if(strtolower($args[0] == "dom")) {
 						if(!$this->plugin->isInFaction($player)) {
-							$sender->sendMessage($this->plugin->formatMessage("You must be in a faction to do this."));
+							$sender->sendMessage($this->plugin->formatMessage("Musisz miec pierw gildie."));
 						}
 						if(!$this->plugin->isLeader($player) && !$this->plugin->hasPermission($player, "home")) {
-							$sender->sendMessage($this->plugin->formatMessage("You do not have permission to do this"));
+							$sender->sendMessage($this->plugin->formatMessage("Nie masz odpowienich uprawnien by skorzytac z tej komendy"));
 							return true;
 						}
 						$faction = $this->plugin->getPlayerFaction($sender->getName());
@@ -544,22 +544,22 @@ class FactionCommands {
 						if(!empty($array)) {
 							$world = $this->plugin->getServer()->getLevelByName($array['world']);
 +							$sender->getPlayer()->teleport(new Position($array['x'], $array['y'], $array['z'], $world));
-							$sender->sendMessage($this->plugin->formatMessage("Teleported home.", true));
+							$sender->sendMessage($this->plugin->formatMessage("Teleportacja do domu gildi.", true));
 							return true;
 						} else {
-							$sender->sendMessage($this->plugin->formatMessage("Home is not set."));
+							$sender->sendMessage($this->plugin->formatMessage("Dom nie jest ustawiony."));
 							}
 						}
 					
 					/////////////////////////////// ABOUT ///////////////////////////////
 					
-					if(strtolower($args[0] == 'about')) {
-						$sender->sendMessage(TextFormat::BLUE . "FactionsPro v1.4.0 BETA by " . TextFormat::BOLD . "Tethered_\n" . TextFormat::RESET . TextFormat::BLUE . "Twitter: " . TextFormat::ITALIC . "@Tethered_");
+					if(strtolower($args[0] == 'informacje')) {
+						$sender->sendMessage(TextFormat::BLUE . "FactionsPro v1.4.0 BETA by " . TextFormat::BOLD . "PolandPEEdit" . TextFormat::RESET . TextFormat::BLUE . "" . TextFormat::ITALIC . "GitHub: https://github.com/PolandPEEdit");
 					}
 				}
 			}
 		} else {
-			$this->plugin->getServer()->getLogger()->info($this->plugin->formatMessage("Please run command in game"));
+			$this->plugin->getServer()->getLogger()->info($this->plugin->formatMessage("Prosze komendy wpisywac w grze! :)"));
 		}
 	}
 }

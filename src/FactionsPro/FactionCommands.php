@@ -318,14 +318,14 @@ class FactionCommands {
 					}
 					if(strtolower($args[0]) == "pomoc") {
 						if(!isset($args[1]) || $args[1] == 1) {
-							$sender->sendMessage(TextFormat::BLUE . "FactionsPro Help Page 1 of 3" . TextFormat::RED . "\n/f about\n/f accept\n/f claim\n/f create <name>\n/f del\n/f demote <player>\n/f deny");
+							$sender->sendMessage(TextFormat::BLUE . "Gildie pomoc: Strona 1 z 3" . TextFormat::RED . "\n/g informacje\n/g akceptuj\n/g obszar\n/g stworz <nazwa gildi>\n/g usun\n/f zdegraduj <gracx>\n/g odrzuc");
 							return true;
 						}
 						if($args[1] == 2) {
-							$sender->sendMessage(TextFormat::BLUE . "FactionsPro Help Page 2 of 3" . TextFormat::RED . "\n/f home\n/f help <page>\n/f info\n/f info <faction>\n/f invite <player>\n/f kick <player>\n/f leader <player>\n/f leave");
+							$sender->sendMessage(TextFormat::BLUE . "Gildie pomoc: Strona 2 z 3" . TextFormat::RED . "\n/g dom\n/g pomoc <strona>\n/f informacje\n/g info <gildia>\n/g dodaj <gracz>\n/f wyrzuc <gracz>\n/g lider <player>\n/f leave");
 							return true;
 						} else {
-							$sender->sendMessage(TextFormat::BLUE . "FactionsPro Help Page 3 of 3" . TextFormat::RED . "\n/f motd\n/f promote <player>\n/f sethome\n/f unclaim\n/f unsethome");
+							$sender->sendMessage(TextFormat::BLUE . "Gildie pomoc: Strona 3 z 3" . TextFormat::RED . "\n/g motto\n/g awans <gracz>\n/f ustawdom\n/g innyobczar\n/g usundom");
 							return true;
 						}
 					}
